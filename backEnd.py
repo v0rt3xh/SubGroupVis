@@ -257,7 +257,7 @@ class ourVisualizer:
                 color=alt.value(colors[2]),
                 tooltip=other_cols
             ).interactive()
-            fig = fig.properties(title="Why are they " + mode + "?", width=480, height=320)
+            fig = fig.properties(title="Why are they " + mode + "?", width=720, height=480)
             figure_list.append(fig)
         return figure_list
 
