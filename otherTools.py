@@ -85,4 +85,4 @@ def plot_switcher(figure_dict, mode):
                 step=1,
                 value=1,
             )
-            st.pyplot(cur_list[figure_index - 1])
+            st.altair_chart(cur_list[figure_index - 1])
