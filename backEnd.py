@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
-
+import streamlit as st
 
 class clusterModel:
   def __init__(self, normalized_data, mode = "kmeans"):
@@ -232,5 +232,6 @@ class ourVisualizer:
     # We can also write a auxilary function for the repeated scripts
     # 这里应该单独搞个plot子函数，代码有冗余
     similar_figures = self.scatter_plot(mode = "Similar", colors=colors)
-    different_figures = self.scatter_plot(mode = "Different", colors=colors)  
-    return similar_figures, different_figures
+    different_figures = self.scatter_plot(mode = "Different", colors=colors)
+    figure_dict = {"Similar": similar_figures, "Different": different_figures}  
+    return figure_dict

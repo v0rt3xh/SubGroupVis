@@ -3,6 +3,8 @@
 import warnings
 # import pandas as pd 
 import streamlit as st
+apptitle = "CS765 DC2"
+st.set_page_config(page_title=apptitle, page_icon=":heavy_check_mark:")
 from otherTools import *
 from backEnd import * 
 
@@ -28,7 +30,7 @@ normalized_numerics = standardizer(dataset, numerics)
 
 # streamlit interface
 
-st.title("Similarity Subgrouper")
+st.sidebar.markdown("## Similarity Subgrouper")
 cluster_k_selectbox = st.sidebar.slider(
     label = "Number of Clusters",
     min_value = 2,
@@ -70,22 +72,27 @@ subgroups = get_subgroups(dataset, categorical_scope)
 
 # Fit the model and find
 
-
-
 backEnd_result = backEndModel(subgroups=subgroups, labels=cluster_labels, 
 				 num_clusters=cluster_k_selectbox, data=dataset)
 # try and catch when no levels are selected.
 s_indices, d_indices = backEnd_result.retrieve_group_indices(tuple(level_selections))
 subgroup_index = list(subgroups.keys()).index(tuple(level_selections))
 visualizer = ourVisualizer(subgroup_index, s_indices, d_indices, subgroups, dataset[numerics])
-similar_figures, different_figures = visualizer.scatter2D()
+
 # display the plot 
 # add some button to shift plot type
-button_column1, button_column2 = st.columns(2)
-button_column1.button('Switch to Histogram')
-button_column2.button('Switch to Different')
 
-with st.container():
-	st.pyplot(similar_figures[0])
+radio_column1, radio_column2 = st.columns([1.5, 1])
+st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 
+# For radio, the default option is the first option (we can change it though)
+radio1 = radio_column1.radio(label="Plot type", options=["Scatter plot", "Histograms"])
+radio2 = radio_column2.radio(label="Presented Group", options=["Similar", "Different"])
+
+# Quite complicated process ...
+if radio1 == "Scatter plot":
+	scatter_figure_dict = visualizer.scatter2D()
+	plot_switcher(scatter_figure_dict, radio2)
+else:
+	st.text("PlaceHolder")
 

@@ -41,7 +41,7 @@ def get_subgroups(df: pd.DataFrame, categories: list):
       idx = idx & (df[categories[i]]==feat)
     subgroups_dict[sg] = pd.Index(idx)
   return subgroups_dict
-  
+
 @st.cache(suppress_st_warning = True)
 def retrieve_levels(data, categories):
   '''
@@ -57,3 +57,22 @@ def retrieve_levels(data, categories):
   for c in categories:
     level_dict[c] = data[c].unique()
   return level_dict
+
+def plot_switcher(figure_dict, mode):
+  '''
+  Help readeres switch to different plots
+  arg:
+    figure_dict: A dictionary for figures
+    mode: either "Similar" or "Different"
+  '''
+  cur_list = figure_dict[mode]
+  figure_list_length = len(cur_list)
+  if figure_list_length == 1:
+    with st.container():
+      st.pyplot(cur_list[0])
+  elif figure_list_length > 1:
+    with st.container():
+      figure_index = st.slider(label = "Select" + mode + "Groups",min_value = 0,
+                     max_value = figure_list_length, step = 1, value = 1)
+      st.pyplot(cur_list[figure_index - 1])
+
