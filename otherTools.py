@@ -75,7 +75,7 @@ def plot_switcher(figure_dict, mode):
     figure_list_length = len(cur_list)
     if figure_list_length == 1:
         with st.container():
-            st.pyplot(cur_list[0])
+            st.altair_chart(cur_list[0])
     elif figure_list_length > 1:
         with st.container():
             figure_index = st.slider(

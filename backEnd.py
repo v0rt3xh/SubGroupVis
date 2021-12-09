@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import streamlit as st
+import altair as alt
 
 
 class clusterModel:
@@ -229,6 +230,37 @@ class ourVisualizer:
             figure_list.append(fig)
         return figure_list
 
+    def scatter_altair(self, mode, colors):
+        """
+        helper method to make the scatterplot with altair
+        return a list of figures (matplotlib form)
+        args:
+          v1: Dimension 1
+          v2: Dimension 2
+          mode: "Similar" or "Different", to help us make titles
+        """
+        figure_list = []
+        for s in self.indices_Dict[mode]:
+            current_group = self.getSubset(s)
+            direction1, direction2 = self.getDirections(current_group, mode)
+            # `other_cols` for showing other information in the interactive figure
+            other_cols = [i for i in current_group.columns if i not in [direction1, direction2]]
+            fig = alt.Chart(current_group).mark_circle().encode(
+                x=direction1,
+                y=direction2,
+                color=alt.value(colors[0]),
+                tooltip=other_cols
+            ).interactive() + \
+            alt.Chart(self.cur_group).mark_circle().encode(
+                x=direction1,
+                y=direction2,
+                color=alt.value(colors[2]),
+                tooltip=other_cols
+            ).interactive()
+            fig = fig.properties(title="Why are they " + mode + "?")
+            figure_list.append(fig)
+        return figure_list
+
     def scatter2D(self, colors=["green", "blue", "red"]):
         """
         intention:
@@ -242,7 +274,7 @@ class ourVisualizer:
 
         # We can also write a auxilary function for the repeated scripts
         # 这里应该单独搞个plot子函数，代码有冗余
-        similar_figures = self.scatter_plot(mode="Similar", colors=colors)
-        different_figures = self.scatter_plot(mode="Different", colors=colors)
+        similar_figures = self.scatter_altair(mode="Similar", colors=colors)
+        different_figures = self.scatter_altair(mode="Different", colors=colors)
         figure_dict = {"Similar": similar_figures, "Different": different_figures}
         return figure_dict
