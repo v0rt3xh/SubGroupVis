@@ -66,7 +66,7 @@ def retrieve_levels(data, categories):
 
 def plot_switcher(figure_dict, mode):
     """
-    Help readeres switch to different plots
+    Help readeres switch to different scatter plots
     arg:
       figure_dict: A dictionary for figures
       mode: either "Similar" or "Different"
@@ -86,3 +86,31 @@ def plot_switcher(figure_dict, mode):
                 value=1,
             )
             st.altair_chart(cur_list[figure_index - 1])
+
+
+def histogram_switch(histogram_dict, numeric_radio, mode_radio):
+    """
+    histogram has a slightly different front-end logic
+    arg:
+        histogram_dict: A dictionary with key as numerical variables  
+        and histogram list as value, 
+        numeric_radio: the name of numeric variable selected by the user
+        mode_radio: "Similar" or "Different"
+    """
+    #
+    cur_histo_Dict = histogram_dict[mode_radio]
+    cur_list = cur_histo_Dict[numeric_radio]
+    figure_list_length = len(cur_list)
+    if figure_list_length == 1:
+        with st.container():
+            st.pyplot(cur_list[0])
+    elif figure_list_length > 1:
+        with st.container():
+            figure_index = st.slider(
+                label="Select" + mode + "Groups",
+                min_value=0,
+                max_value=figure_list_length,
+                step=1,
+                value=1,
+            )
+            st.pyplot(cur_list[figure_index - 1])

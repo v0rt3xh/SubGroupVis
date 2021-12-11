@@ -114,4 +114,6 @@ if radio1 == "Scatter plot":
     scatter_figure_dict = visualizer.scatter2D()
     plot_switcher(scatter_figure_dict, radio2)
 else:
-    st.text("PlaceHolder")
+    histogram_dict = visualizer.generate_histogram()
+    num_var_radio = st.radio(label="Numeric Attributes", options=numerics)
+    histogram_switch(histogram_dict, num_var_radio, radio2)

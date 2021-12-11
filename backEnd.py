@@ -230,6 +230,26 @@ class ourVisualizer:
             figure_list.append(fig)
         return figure_list
 
+    def retrieve_limits(self, direction1, direction2, dataSubset_tuple):
+        """
+        The method that we use to set the x-axis and y-axis range
+        Could be useful for different types of plot I believe
+        args:
+            direction1: the first column / direction we obtained
+            direction2: the second column / direction we obtained
+            dataSubset_tuple: the numerical data subsets of the two groups
+            e.g (self.cur_group, current_group)
+        return:
+            ([min1, max1], [min2, max2]): The limits of x-axis and y-axis
+        Would be called several times, not that efficient
+        """
+        group1, group2 = dataSubset_tuple
+        min1 = min(min(group1[direction1]), min(group2[direction1])) - 1
+        min2 = min(min(group1[direction2]), min(group2[direction2])) - 1
+        max1 = max(max(group1[direction1]), max(group2[direction1])) + 1
+        max2 = max(max(group1[direction2]), max(group2[direction2])) + 1
+        return ([min1, max1], [min2, max2])
+
     def scatter_altair(self, mode, colors):
         """
         helper method to make the scatterplot with altair
@@ -244,20 +264,37 @@ class ourVisualizer:
             current_group = self.getSubset(s)
             direction1, direction2 = self.getDirections(current_group, mode)
             # `other_cols` for showing other information in the interactive figure
-            other_cols = [i for i in current_group.columns if i not in [direction1, direction2]]
-            fig = alt.Chart(current_group).mark_circle().encode(
-                x=direction1,
-                y=direction2,
-                color=alt.value(colors[0]),
-                tooltip=other_cols
-            ).interactive() + \
-            alt.Chart(self.cur_group).mark_circle().encode(
-                x=direction1,
-                y=direction2,
-                color=alt.value(colors[2]),
-                tooltip=other_cols
-            ).interactive()
-            fig = fig.properties(title="Why are they " + mode + "?", width=720, height=640)
+            other_cols = [
+                i for i in current_group.columns if i not in [direction1, direction2]
+            ]
+            # Compute the range of axis:
+            limit_1, limit_2 = self.retrieve_limits(
+                direction1, direction2, (current_group, self.cur_group)
+            )
+            fig = (
+                alt.Chart(current_group)
+                .mark_circle()
+                .encode(
+                    x=alt.X(direction1, scale=alt.Scale(domain=limit_1)),
+                    y=alt.Y(direction2, scale=alt.Scale(domain=limit_2)),
+                    color=alt.value(colors[0]),
+                    tooltip=other_cols,
+                )
+                .interactive()
+                + alt.Chart(self.cur_group)
+                .mark_circle()
+                .encode(
+                    x=alt.X(direction1, scale=alt.Scale(domain=limit_1)),
+                    y=alt.Y(direction2, scale=alt.Scale(domain=limit_2)),
+                    color=alt.value(colors[2]),
+                    tooltip=other_cols,
+                )
+                .interactive()
+            )
+            fig = fig.properties(
+                title="Why are they " + mode + "?", width=540, height=480
+            )
+            # need a method to set the limits of axes
             figure_list.append(fig)
         return figure_list
 
@@ -273,8 +310,48 @@ class ourVisualizer:
         # Plot similar first
 
         # We can also write a auxilary function for the repeated scripts
-        # 这里应该单独搞个plot子函数，代码有冗余
         similar_figures = self.scatter_altair(mode="Similar", colors=colors)
         different_figures = self.scatter_altair(mode="Different", colors=colors)
         figure_dict = {"Similar": similar_figures, "Different": different_figures}
+        return figure_dict
+
+    def generate_histogram(self, colors=["green", "red"]):
+        similar_figures = self.group_histogram(mode="Similar", colors=colors)
+        different_figures = self.group_histogram(mode="Different", colors=colors)
+        figure_dict = {"Similar": similar_figures, "Different": different_figures}
+        return figure_dict
+
+    def group_histogram(self, mode, colors):
+        """
+        Draw a series of histogram: w.r.t different numerical variables
+        args:
+            mode: "Similar" or "Different"
+            colors: for the color of bars in histograms
+        return:
+            A dictionary with key as numerical variables  
+            and histogram list as value, 
+            to make our life easier, we use matplotlib =D
+        """
+        kwargs = dict(alpha=0.5, bins=100, density=True, stacked=True)
+        figure_dict = {}
+        for name in self.column_names:
+            figure_dict[name] = []
+        # The nesting loop looks nasty though.
+        for s in self.indices_Dict[mode]:
+            current_group = self.getSubset(s)
+            for name in self.column_names:
+                fig, ax = plt.subplots()
+                # Current similar group
+                ax.hist(
+                    current_group[name], **kwargs, color=colors[0], label=mode + "group"
+                )
+                ax.hist(
+                    self.cur_group[name],
+                    **kwargs,
+                    color=colors[1],
+                    label="Current Group"
+                )
+                ax.set_title("Why are they " + mode + "?")
+                ax.legend()
+                figure_dict[name].append(fig)
         return figure_dict
