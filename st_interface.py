@@ -111,9 +111,26 @@ radio2 = radio_column2.radio(label="Presented Group", options=["Similar", "Diffe
 
 # Quite complicated process ...
 if radio1 == "Scatter plot":
-    scatter_figure_dict = visualizer.scatter2D()
-    plot_switcher(scatter_figure_dict, radio2)
+    scatter_figure_dict, level_dict = visualizer.scatter2D()
+    print(level_dict)
+    display_index = plot_switcher(scatter_figure_dict, radio2)
 else:
-    histogram_dict = visualizer.generate_histogram()
+    histogram_dict, level_dict = visualizer.generate_histogram()
     num_var_radio = st.radio(label="Numeric Attributes", options=numerics)
-    histogram_switch(histogram_dict, num_var_radio, radio2)
+    display_index = histogram_switch(histogram_dict, num_var_radio, radio2)
+
+# At last, add some text description,
+# let the user know the levels of subgroups
+caption_column1, caption_column2 = st.columns([1, 1])
+caption_column1.caption("Current Group Levels")
+display_input_group = generate_tables(categorical_scope, level_selections)
+# a weird bug of streamlit, has to convert to str before 'writing'
+display_input_group = display_input_group.astype(str)
+caption_column1.write(display_input_group)
+caption_column2.caption(radio2 + " Group Levels")
+display_output_group = generate_tables(
+    categorical_scope, level_dict[radio2][display_index]
+)
+# a weird bug of streamlit, has to convert to str before 'writing'
+display_output_group = display_output_group.astype(str)
+caption_column2.write(display_output_group)

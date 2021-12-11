@@ -175,12 +175,15 @@ class ourVisualizer:
           group_index
         return:
           the data subset (corresponds to that group)
+          levels of the group (a list)
+          # TODO: Also return the levels of the group
         """
         # First retrieve the 2 data subset.
         # We can keep the full dataset,
         # Though here, we choose to get only the numeric ones
         subset_group = self.data[self.subgroups[self.subgroups_names[group_index]]]
-        return subset_group
+        level_list = list(self.subgroups_names[group_index])
+        return subset_group, level_list
 
     def getDirections(self, related_group, mode="Similar"):
         """
@@ -206,6 +209,7 @@ class ourVisualizer:
         """
         helper method to plot the scatterplot
         return a list of figures (matplotlib form)
+        also the levels of subgroups
         # TODO: I think it should be a dictionary
         # in order to add more descriptions.
         args:
@@ -214,8 +218,11 @@ class ourVisualizer:
           mode: "Similar" or "Different", to help us make titles
         """
         figure_list = []
+        level_list = []
         for s in self.indices_Dict[mode]:
-            current_group = self.getSubset(s)
+            # TODO: getSubset would change return values
+            current_group, current_level_list = self.getSubset(s)
+            level_list.append(current_level_list)
             direction1, direction2 = self.getDirections(current_group, mode)
             fig, ax = plt.subplots()
             ax.scatter(
@@ -228,7 +235,7 @@ class ourVisualizer:
             ax.set_ylabel(direction2)
             ax.set_title("Why are they " + mode + "?")
             figure_list.append(fig)
-        return figure_list
+        return figure_list, level_list
 
     def retrieve_limits(self, direction1, direction2, dataSubset_tuple):
         """
@@ -253,15 +260,19 @@ class ourVisualizer:
     def scatter_altair(self, mode, colors):
         """
         helper method to make the scatterplot with altair
-        return a list of figures (matplotlib form)
+        return a list of figures
+        # Also return the list of levels
         args:
           v1: Dimension 1
           v2: Dimension 2
           mode: "Similar" or "Different", to help us make titles
         """
         figure_list = []
+        level_list = []
         for s in self.indices_Dict[mode]:
-            current_group = self.getSubset(s)
+            # TODO: get subset would change return values
+            current_group, current_level_list = self.getSubset(s)
+            level_list.append(current_level_list)
             direction1, direction2 = self.getDirections(current_group, mode)
             # `other_cols` for showing other information in the interactive figure
             other_cols = [
@@ -277,7 +288,7 @@ class ourVisualizer:
                 .encode(
                     x=alt.X(direction1, scale=alt.Scale(domain=limit_1)),
                     y=alt.Y(direction2, scale=alt.Scale(domain=limit_2)),
-                    color=alt.value(colors[0]),
+                    color=alt.value(colors[1]),
                     tooltip=other_cols,
                 )
                 .interactive()
@@ -296,7 +307,7 @@ class ourVisualizer:
             )
             # need a method to set the limits of axes
             figure_list.append(fig)
-        return figure_list
+        return figure_list, level_list
 
     def scatter2D(self, colors=["green", "blue", "red"]):
         """
@@ -310,16 +321,26 @@ class ourVisualizer:
         # Plot similar first
 
         # We can also write a auxilary function for the repeated scripts
-        similar_figures = self.scatter_altair(mode="Similar", colors=colors)
-        different_figures = self.scatter_altair(mode="Different", colors=colors)
+        similar_figures, similar_levels = self.scatter_altair(
+            mode="Similar", colors=colors
+        )
+        different_figures, different_levels = self.scatter_altair(
+            mode="Different", colors=colors
+        )
         figure_dict = {"Similar": similar_figures, "Different": different_figures}
-        return figure_dict
+        level_dict = {"Similar": similar_levels, "Different": different_levels}
+        return figure_dict, level_dict
 
     def generate_histogram(self, colors=["green", "red"]):
-        similar_figures = self.group_histogram(mode="Similar", colors=colors)
-        different_figures = self.group_histogram(mode="Different", colors=colors)
+        similar_figures, similar_levels = self.group_histogram(
+            mode="Similar", colors=colors
+        )
+        different_figures, different_levels = self.group_histogram(
+            mode="Different", colors=colors
+        )
         figure_dict = {"Similar": similar_figures, "Different": different_figures}
-        return figure_dict
+        level_dict = {"Similar": similar_levels, "Different": different_levels}
+        return figure_dict, level_dict
 
     def group_histogram(self, mode, colors):
         """
@@ -334,11 +355,14 @@ class ourVisualizer:
         """
         kwargs = dict(alpha=0.5, bins=100, density=True, stacked=True)
         figure_dict = {}
+        level_list = []
         for name in self.column_names:
             figure_dict[name] = []
         # The nesting loop looks nasty though.
         for s in self.indices_Dict[mode]:
-            current_group = self.getSubset(s)
+            # TODO: getSubset would change return values
+            current_group, current_level_list = self.getSubset(s)
+            level_list.append(current_level_list)
             for name in self.column_names:
                 fig, ax = plt.subplots()
                 # Current similar group
@@ -351,7 +375,8 @@ class ourVisualizer:
                     color=colors[1],
                     label="Current Group"
                 )
+                ax.set_xlabel(name)
                 ax.set_title("Why are they " + mode + "?")
                 ax.legend()
                 figure_dict[name].append(fig)
-        return figure_dict
+        return figure_dict, level_list

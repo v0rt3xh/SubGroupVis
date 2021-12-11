@@ -70,14 +70,24 @@ def plot_switcher(figure_dict, mode):
     arg:
       figure_dict: A dictionary for figures
       mode: either "Similar" or "Different"
+    return:
+      an index for us to display text
     """
     cur_list = figure_dict[mode]
     figure_list_length = len(cur_list)
     if figure_list_length == 1:
-        with st.container():
+        # TODO: Would be tricky to add legend in altair,
+        # Use other methods instead.
+        figure_column, legend_column = st.columns([3.6, 1])
+        with figure_column.container():
             st.altair_chart(cur_list[0])
+        with legend_column.container():
+            st.write("Input Group: :red_circle:")
+            st.write(mode + " Group: :large_blue_circle:")
+        return 0
     elif figure_list_length > 1:
-        with st.container():
+        figure_column, legend_column = st.columns([3.6, 1])
+        with figure_column.container():
             figure_index = st.slider(
                 label="Select" + mode + "Groups",
                 min_value=0,
@@ -86,6 +96,10 @@ def plot_switcher(figure_dict, mode):
                 value=1,
             )
             st.altair_chart(cur_list[figure_index - 1])
+        with legend_column.container():
+            st.write("Input Group: :red_circle:")
+            st.write(mode + " Group: :large_blue_circle:")
+        return figure_index - 1
 
 
 def histogram_switch(histogram_dict, numeric_radio, mode_radio):
@@ -96,6 +110,8 @@ def histogram_switch(histogram_dict, numeric_radio, mode_radio):
         and histogram list as value, 
         numeric_radio: the name of numeric variable selected by the user
         mode_radio: "Similar" or "Different"
+    return:
+        an index for us to display text
     """
     #
     cur_histo_Dict = histogram_dict[mode_radio]
@@ -104,6 +120,7 @@ def histogram_switch(histogram_dict, numeric_radio, mode_radio):
     if figure_list_length == 1:
         with st.container():
             st.pyplot(cur_list[0])
+        return 0
     elif figure_list_length > 1:
         with st.container():
             figure_index = st.slider(
@@ -114,3 +131,18 @@ def histogram_switch(histogram_dict, numeric_radio, mode_radio):
                 value=1,
             )
             st.pyplot(cur_list[figure_index - 1])
+        return figure_index - 1
+
+
+@st.cache(suppress_st_warning=True)
+def generate_tables(categories, levels):
+    """
+    Method to generate pandas dataframe
+    that help readers learn current group levels
+    args:  
+        categories: Current selected categories
+        levels: selected levels
+    return:
+        pd.DataFrame that can be "written" by streamlit
+    """
+    return pd.DataFrame({"Category": categories, "level": levels})
