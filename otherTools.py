@@ -106,8 +106,8 @@ def histogram_switch(histogram_dict, numeric_radio, mode_radio):
     """
     histogram has a slightly different front-end logic
     arg:
-        histogram_dict: A dictionary with key as numerical variables  
-        and histogram list as value, 
+        histogram_dict: A dictionary with key as numerical variables
+        and histogram list as value,
         numeric_radio: the name of numeric variable selected by the user
         mode_radio: "Similar" or "Different"
     return:
@@ -139,7 +139,7 @@ def generate_tables(categories, levels):
     """
     Method to generate pandas dataframe
     that help readers learn current group levels
-    args:  
+    args:
         categories: Current selected categories
         levels: selected levels
     return:

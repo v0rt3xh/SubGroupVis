@@ -349,8 +349,8 @@ class ourVisualizer:
             mode: "Similar" or "Different"
             colors: for the color of bars in histograms
         return:
-            A dictionary with key as numerical variables  
-            and histogram list as value, 
+            A dictionary with key as numerical variables
+            and histogram list as value,
             to make our life easier, we use matplotlib =D
         """
         kwargs = dict(alpha=0.5, bins=100, density=True, stacked=True)
@@ -367,7 +367,10 @@ class ourVisualizer:
                 fig, ax = plt.subplots()
                 # Current similar group
                 ax.hist(
-                    current_group[name], **kwargs, color=colors[0], label=mode + "group"
+                    current_group[name],
+                    **kwargs,
+                    color=colors[0],
+                    label=mode + " Group"
                 )
                 ax.hist(
                     self.cur_group[name],
