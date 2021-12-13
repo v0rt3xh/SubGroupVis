@@ -42,7 +42,8 @@ CAUTION: We assume that there are at least two numerical variables and at most e
 You may use your own dataset. However, you will need to modify some scripts in st_interface.py. You will need to specify the location of your dataset, a string list of the names of numerical columns, a string list of categroical variables, and a default selection of categorical variables.
 
 ```
-dataset = pd.read_csv("YourDirectory/YourData")
+directory = "YourDirectory/YourData"
+dataset = read_data(directory)
 numerics = [numericVar1, numericVar2, numericVar3]
 category_full_list = [categorical1, categorical2]
 default_categories = [category_full_list[0], category_full_list[1]]
@@ -51,5 +52,6 @@ default_categories = [category_full_list[0], category_full_list[1]]
 ## Authors
 
 Haitao Huang
+
 Wendi Li
 

@@ -1,23 +1,25 @@
-# Loading packages
-
+# Loading libraries
 import warnings
-
-# import pandas as pd
 import streamlit as st
-
-apptitle = "CS765 DC2"
-st.set_page_config(page_title=apptitle, page_icon=":heavy_check_mark:")
 from otherTools import *
 from backEnd import *
 
+apptitle = "CS765 DC2"
+st.set_page_config(page_title=apptitle, page_icon=":heavy_check_mark:")
 
 # Load a sample dataset
 # Here, we first go with heart failure prediction
 
-dataset = pd.read_csv("Data/heart.csv")
+directory = "Data/heart.csv"
+dataset = read_data(directory)
 
+# Possible variation:
 # if we want to add a component for switching datasets,
 # the following numerics list should be in a dictionary
+
+# To use a customized dataset, you need to specify
+# numeric columns and categorical columns
+
 numerics = ["RestingBP", "Cholesterol", "MaxHR", "Oldpeak"]
 
 category_full_list = [
@@ -29,6 +31,8 @@ category_full_list = [
     "ST_Slope",
     "HeartDisease",
 ]
+
+# retrieve the levels of categorical variables
 
 level_full_options = retrieve_levels(dataset, category_full_list)
 

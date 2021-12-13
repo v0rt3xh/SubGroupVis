@@ -6,6 +6,13 @@ import random
 import streamlit as st
 
 
+@st.cache(suppress_st_warning=True)
+def read_data(directory):
+    data = pd.read_csv(directory)
+    return data
+
+
+# deprecated method for generating default subgroups
 def random_categories(categories, num=3):
     N = len(categories)
     index_array = np.random.choice(N, replace=False, size=num)
