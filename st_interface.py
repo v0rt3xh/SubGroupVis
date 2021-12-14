@@ -64,7 +64,7 @@ cluster_labels = cluster_model.train(num_clusters=cluster_k_selectbox)
 categorical_scope = st.sidebar.multiselect(
     label="Select Categorical Variables",
     options=category_full_list,
-    default=["Sex", "ChestPainType", "RestingECG"]
+    default=[category_full_list[0], category_full_list[1], category_full_list[3]]
     # TODO need a default setup?
 )
 level_selections = []

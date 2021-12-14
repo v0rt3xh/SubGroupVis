@@ -10,7 +10,19 @@ NOTICE: If you want to try a web demo without building the tool locally, click t
 
 [Streamlit demo](https://share.streamlit.io/v0rt3xh/subgroupvis/main/st_interface.py)
 
-### Dependencies
+### Components
+
+`backEnd.py`: The file consists of our clustering-based model and the class for drawing visualizations.
+
+`otherTools.py`: Some helper methods to read in data, defining subgroups, etc.
+
+`st_interface.py`: We design the web demo interface in this file. If you want to try customized dataset, you will need to make some changes this file. Check the section below.
+
+`requirements.txt`: A complete list of libraries we have used.  
+
+`Data`: A folder containing the sample dataset. 
+
+### Core Dependencies
 
 * Python 3.7 - 3.9
 * Altair 4.1.0
@@ -39,15 +51,34 @@ You should see the interactive demo in your browser after few seconds.
 
 CAUTION: We assume that there are at least two numerical variables and at most eight categorical variables in the data.
 
-You may use your own dataset. However, you will need to modify some scripts in st_interface.py. You will need to specify the location of your dataset, a string list of the names of numerical columns, a string list of categroical variables, and a default selection of categorical variables.
+You may use your own dataset. However, you will need to modify some scripts in `st_interface.py`. You will need to specify the location of your dataset, a string list of the names of numerical columns and a string list of categroical variables.
 
 ```
 directory = "YourDirectory/YourData"
 dataset = read_data(directory)
 numerics = [numericVar1, numericVar2, numericVar3]
 category_full_list = [categorical1, categorical2]
-default_categories = [category_full_list[0], category_full_list[1]]
 ```
+
+To be more specific, we include another dataset `CarPrice_Assignment.csv` in the `Data` folder. To try our demo on the dataset, you can replace the above scripts in `st_interface.py` by the following scripts:
+
+```
+directory_cars = "Data/CarPrice_Assignment.csv"
+dataset = read_data(directory_cars)
+numerics = ["wheelbase", "carlength", "carheight", 
+            "enginesize", "horsepower", "highwaympg", "price"]
+
+category_full_list = ["fueltype", 
+	"aspiration", 
+	"doornumber", 
+	"carbody", 
+	"drivewheel", 
+	"cylindernumber"
+]
+
+```
+
+
 
 ## Authors
 
