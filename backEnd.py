@@ -353,7 +353,7 @@ class ourVisualizer:
             and histogram list as value,
             to make our life easier, we use matplotlib =D
         """
-        kwargs = dict(alpha=0.5, bins=100, density=True, stacked=True)
+        kwargs = dict(alpha=0.5, bins=30, density=True, stacked=True)
         figure_dict = {}
         level_list = []
         for name in self.column_names:
