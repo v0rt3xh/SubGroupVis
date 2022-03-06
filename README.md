@@ -2,7 +2,7 @@
 
 ## Similarity Subgrouper 
 
-The tool determine similar or different subgroups for the input group using a clustering-based model. In the interactive demo, you can explore possible reasons behind the similarity or dissimilarity. Depend on your interests, you can select different subgroups. You may switch bewteen two types of visualizations: scatter plots and histograms.
+The tool determines similar or different subgroups for the input group using a clustering-based model. In the interactive demo, you can explore possible reasons behind the similarity or dissimilarity. Depend on your interests, you can select different subgroups. You may switch between two types of visualizations: scatter plots and histograms.
 
 ## Getting Started
 
